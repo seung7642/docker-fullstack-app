@@ -1,0 +1,26 @@
+language: generic
+
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t pangtrue/react-test-app -f ./frontend/Dockerfile.dev ./frontend
+
+script:
+  - docker run -e CI=true pangtrue/react-test-app npm run test
+
+after_success:
+  - docker build -t pangtrue/docker-frontend ./frontend
+  - docker build -t pangtrue/docker-backend ./backend
+  - docker build -t pangtrue/docker-nginx ./nginx
+
+  - echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_ID" --password-stdin
+
+  # 빌드된 Docker Image들을 Docker Hub에 업로드합니다.
+  - docker push pangtrue/docker-frontend
+  - docker push pangtrue/docker-backend
+  - docker push pangtrue/docker-nginx
+
+
