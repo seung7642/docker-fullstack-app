@@ -23,4 +23,21 @@ after_success:
   - docker push pangtrue/docker-backend
   - docker push pangtrue/docker-nginx
 
-
+deploy:
+  # 외부 서비스를 표시합니다. (s3, elastic beanstalk, firebase 등등)
+  provider: elasticbeanstalk
+  # 배포할 AWS 서비스가 위치하는 region
+  region: "ap-northeast-2"
+  # 생성된 애플리케이션 이름 (AWS Elastic Beanstalk의 애플리케이션명)
+  app: "docker-react-app"
+  env: DockerreactApp-env
+  # 도커 허브에서 AWS Elastic Beanstalk로 바로 전달하는게 아니라 S3에 먼저 전달합니다.
+  # 따라서 AWS S3 버킷명을 명시합니다.
+  bucket_name: elasticbeanstalk-ap-northeast-2-593939795239
+  bucket_path: "docker-react-app"
+  on:
+    branch: master
+  
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_ACCESS_KEY
+  
